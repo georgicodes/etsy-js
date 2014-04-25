@@ -1,0 +1,14 @@
+{
+  "name": "etsyJS",
+  "version": "0.0.1",
+  "main": "./lib/etsyjs",
+  "dependencies": {
+    "coffee-script": "^1.7.1",
+    "request": "^2.34.0",
+    "deep-extend": "^0.2.8"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-contrib-coffee": "^0.10.1"
+  }
+}
