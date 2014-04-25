@@ -3,15 +3,15 @@ request = require 'request'
 url = require 'url'
 extend    = require 'deep-extend'
 
-#User = require './user'
+User = require './user'
 
 class Client
 
   constructor: (@apiKey, @options) ->
     @request = @options and @options.request or request
-    @requestDefaults =
-      headers:
-        'User-Agent': 'etsyjs/0.0.1 (geekgirl.io) terminal/0.0'
+
+  user:(login) ->
+    new User(login, @)
 
   buildUrl: (path = '/') ->
     query = {}
@@ -24,9 +24,6 @@ class Client
       query: query
 
     return _url
-
-  requestOptions: (params1, params2) =>
-    return extend @requestDefaults, params1, params2
 
   errorHandle: (res, body, callback) ->
     # TODO: More detailed HTTP error message
@@ -42,7 +39,7 @@ class Client
     callback null, res.statusCode, body, res.headers
 
   get: (path, params..., callback) ->
-    @request @requestOptions(
+    @request (
       uri: @buildUrl path
       method: 'GET'
     ), (err, res, body) =>
