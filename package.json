@@ -5,7 +5,8 @@
   "dependencies": {
     "coffee-script": "^1.7.1",
     "request": "^2.34.0",
-    "deep-extend": "^0.2.8"
+    "deep-extend": "^0.2.8",
+    "nock": "^0.28.2"
   },
   "devDependencies": {
     "grunt": "^0.4.4",

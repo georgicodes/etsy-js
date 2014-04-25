@@ -10,10 +10,14 @@ var client = etsyjs.client(process.env.ETSY_API_KEY);
 //    console.log(body); //json object
 //});
 
-var etsyUser = client.user('georgiknox');
-
-etsyUser.info(function (err, body, headers) {
-    console.log("error: " + err);
+var callback = function (err, body, headers) {
     console.log(body); //json object
-    console.log(headers);
-});
+};
+
+var etsyUser = client.user('georgiknox');
+var etsySearch = client.search();
+
+
+//etsyUser.getUser(callback);
+//etsyUser.getUser(callback);
+etsySearch.findAllUsers({keywords: 'dog,cat'}, callback);

@@ -1,21 +1,29 @@
-# Requiring modules
+# Required modules
 request = require 'request'
 url = require 'url'
-extend    = require 'deep-extend'
 
 User = require './user'
+Search = require './search'
 
 class Client
 
   constructor: (@apiKey, @options) ->
     @request = @options and @options.request or request
 
-  user:(login) ->
+  user: (login) ->
     new User(login, @)
 
-  buildUrl: (path = '/') ->
-    query = {}
-    query.api_key = @apiKey
+  search: ->
+    new Search(@)
+
+  buildUrl: (path = '/', pageOrQuery = null) ->
+    if pageOrQuery? and typeof pageOrQuery == 'object'
+      query = pageOrQuery
+    else
+      query = {}
+      query.page = pageOrQuery if pageOrQuery?
+
+    query.api_key = @apiKey  #TODO: implement authenticated requests
 
     _url = url.format
       protocol: "https:"
@@ -23,10 +31,10 @@ class Client
       pathname: "/v2" + path
       query: query
 
+    console.log("built url: " + _url)
     return _url
 
   errorHandle: (res, body, callback) ->
-    # TODO: More detailed HTTP error message
     return callback(new HttpError('Error ' + res.statusCode, res.statusCode,
       res.headers)) if Math.floor(res.statusCode / 100) is 5
     if typeof body == 'string'
@@ -40,7 +48,7 @@ class Client
 
   get: (path, params..., callback) ->
     @request (
-      uri: @buildUrl path
+      uri: @buildUrl path, params...
       method: 'GET'
     ), (err, res, body) =>
       return callback(err) if err
