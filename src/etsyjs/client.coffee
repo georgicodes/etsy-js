@@ -3,6 +3,8 @@ request = require 'request'
 url = require 'url'
 
 User = require './user'
+Category = require './category'
+Shop = require './shop'
 Search = require './search'
 
 class Client
@@ -10,8 +12,14 @@ class Client
   constructor: (@apiKey, @options) ->
     @request = @options and @options.request or request
 
-  user: (login) ->
-    new User(login, @)
+  user: (userId) ->
+    new User(userId, @)
+
+  category:(tag) ->
+    new Category(tag, @)
+
+  shop:(shopId) ->
+    new Shop(shopId, @)
 
   search: ->
     new Search(@)
@@ -21,9 +29,8 @@ class Client
       query = pageOrQuery
     else
       query = {}
-      query.page = pageOrQuery if pageOrQuery?
 
-    query.api_key = @apiKey  #TODO: implement authenticated requests
+    query.api_key = @apiKey if @apiKey? #TODO: implement authenticated requests
 
     _url = url.format
       protocol: "https:"
@@ -34,7 +41,7 @@ class Client
     console.log("built url: " + _url)
     return _url
 
-  errorHandle: (res, body, callback) ->
+  handleResponse: (res, body, callback) ->
     return callback(new HttpError('Error ' + res.statusCode, res.statusCode,
       res.headers)) if Math.floor(res.statusCode / 100) is 5
     if typeof body == 'string'
@@ -52,7 +59,7 @@ class Client
       method: 'GET'
     ), (err, res, body) =>
       return callback(err) if err
-      @errorHandle res, body, callback
+      @handleResponse res, body, callback
 
 module.exports = (apiKey, options) ->
   new Client(apiKey, options)

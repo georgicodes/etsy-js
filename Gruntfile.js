@@ -8,6 +8,8 @@ module.exports = function(grunt) {
                 files: {
                     'lib/etsyjs.js': 'src/etsyjs.coffee',
                     'lib/etsyjs/user.js': 'src/etsyjs/user.coffee',
+                    'lib/etsyjs/category.js': 'src/etsyjs/category.coffee',
+                    'lib/etsyjs/shop.js': 'src/etsyjs/shop.coffee',
                     'lib/etsyjs/search.js': 'src/etsyjs/search.coffee',
                     'lib/etsyjs/client.js': 'src/etsyjs/client.coffee'
                 }
