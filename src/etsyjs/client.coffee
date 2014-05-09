@@ -17,8 +17,17 @@ class Client
     @apiSecret = @options.secret
     @callbackURL = @options.callbackURL
     @request = request
+    @etsyOAuth = new OAuth.OAuth(
+      'https://openapi.etsy.com/v2/oauth/request_token?scope=email_r%20profile_r',
+      'https://openapi.etsy.com/v2/oauth/access_token',
+      "#{@apiKey}",
+      "#{@apiSecret}",
+      '1.0',
+      "#{@callbackURL}",
+      'HMAC-SHA1'
+    )
 
-  user:  ->
+  user: ->
     new User(@)
 
   category: (tag) ->
@@ -103,16 +112,6 @@ class Client
         tokenSecret: oauth_access_token_secret
 
       callback null, accessToken
-
-  etsyOAuth: new OAuth.OAuth(
-    'https://openapi.etsy.com/v2/oauth/request_token?scope=email_r%20profile_r',
-    'https://openapi.etsy.com/v2/oauth/access_token',
-    'cndq8yyle7c6ssplz81bf4od',
-    '89fq6biy8w',
-    '1.0',
-    'http://localhost:3000/authorise',
-    'HMAC-SHA1'
-  )
 
 
 module.exports = (apiKey, options) ->

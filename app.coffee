@@ -19,12 +19,12 @@ app.use(cookieParser('secEtsy'))
 app.use(session())
 
 app.get '/', (req, res) ->
-  client.requestToken (err, response) ->
     if (not req.session.token? && not req.session.sec?)
-      console.log "=== requesting token ==="
-      req.session.token = response.token
-      req.session.sec = response.tokenSecret
-      res.redirect response.loginUrl
+      client.requestToken (err, response) ->
+        console.log "=== requesting token ==="
+        req.session.token = response.token
+        req.session.sec = response.tokenSecret
+        res.redirect response.loginUrl
     else
       client.user().myself req.session.token, req.session.sec, (err, body, headers) ->
         res.send body.results[0].login_name
