@@ -11,7 +11,9 @@ module.exports = function(grunt) {
                     'lib/etsyjs/category.js': 'src/etsyjs/category.coffee',
                     'lib/etsyjs/shop.js': 'src/etsyjs/shop.coffee',
                     'lib/etsyjs/search.js': 'src/etsyjs/search.coffee',
-                    'lib/etsyjs/client.js': 'src/etsyjs/client.coffee'
+                    'lib/etsyjs/client.js': 'src/etsyjs/client.coffee',
+                    'lib/etsyjs/auth.js': 'src/etsyjs/auth.coffee',
+                    'lib/etsyjs/listing.js': 'src/etsyjs/listing.coffee'
                 }
             }
         }

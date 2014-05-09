@@ -1,28 +1,37 @@
 # Required modules
 request = require 'request'
 url = require 'url'
+OAuth = require('OAuth')
 
+#Auth = require './auth'
 User = require './user'
 Category = require './category'
 Shop = require './shop'
 Search = require './search'
+Listing = require './listing'
 
 class Client
 
-  constructor: (@apiKey, @options) ->
-    @request = @options and @options.request or request
+  constructor: (@options) ->
+    @apiKey = @options.key
+    @apiSecret = @options.secret
+    @callbackURL = @options.callbackURL
+    @request = request
 
-  user: (userId) ->
-    new User(userId, @)
+  user:  ->
+    new User(@)
 
-  category:(tag) ->
+  category: (tag) ->
     new Category(tag, @)
 
-  shop:(shopId) ->
+  shop: (shopId) ->
     new Shop(shopId, @)
 
   search: ->
     new Search(@)
+
+  listing: ->
+    new Listing(listingId, @)
 
   buildUrl: (path = '/', pageOrQuery = null) ->
     if pageOrQuery? and typeof pageOrQuery == 'object'
@@ -30,7 +39,7 @@ class Client
     else
       query = {}
 
-    query.api_key = @apiKey if @apiKey? #TODO: implement authenticated requests
+    query.api_key = @apiKey if @apiKey? && not @apiSecret?
 
     _url = url.format
       protocol: "https:"
@@ -60,6 +69,43 @@ class Client
     ), (err, res, body) =>
       return callback(err) if err
       @handleResponse res, body, callback
+
+
+  getAuthenticated: (path, token, secret, params..., callback) ->
+    url = @buildUrl path, params...
+    @etsyOAuth.get url, token, secret, (err, data, res) =>
+      return callback(err) if err
+      @handleResponse res, data, callback
+
+
+  requestToken: (callback) ->
+    @etsyOAuth.getOAuthRequestToken (err, oauth_token, oauth_token_secret) ->
+      return callback(err) if err
+      loginUrl = arguments[3].login_url
+      auth =
+        token: oauth_token
+        tokenSecret: oauth_token_secret
+        loginUrl: loginUrl
+      callback null, auth
+
+  accessToken: (token, secret, verifier, callback) ->
+    @etsyOAuth.getOAuthAccessToken token, secret, verifier, (err, oauth_access_token, oauth_access_token_secret, results) ->
+      accessToken =
+        token: oauth_access_token
+        tokenSecret: oauth_access_token_secret
+
+      callback null, accessToken
+
+  etsyOAuth: new OAuth.OAuth(
+    'https://openapi.etsy.com/v2/oauth/request_token?scope=email_r%20profile_r',
+    'https://openapi.etsy.com/v2/oauth/access_token',
+    'cndq8yyle7c6ssplz81bf4od',
+    '89fq6biy8w',
+    '1.0',
+    'http://localhost:3000/authorise',
+    'HMAC-SHA1'
+  )
+
 
 module.exports = (apiKey, options) ->
   new Client(apiKey, options)

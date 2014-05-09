@@ -1,6 +1,14 @@
 class User
 
-  constructor: (@userId, @client) ->
+  constructor: (@client) ->
+
+  myself: (token, secret, params..., cb) ->
+    @client.getAuthenticated "/users/__SELF__", token, secret, params..., (err, status, body, headers) ->
+      return cb(err) if err
+      if status isnt 200
+        cb(new Error('Find authenticated user'))
+      else
+        cb null, body, headers
 
   # Retrieves a User by id
   # '/users/:user_id' GET
@@ -28,6 +36,8 @@ class User
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get user profile error'))
+      else
+        cb null, body, headers
 
   # Returns a list of users who have circled this user
   # /users/:user_id/circles GET

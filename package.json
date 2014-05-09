@@ -6,7 +6,8 @@
     "coffee-script": "^1.7.1",
     "request": "^2.34.0",
     "nock": "^0.28.2",
-    "chai": "^1.9.1"
+    "chai": "^1.9.1",
+    "oauth": "^0.9.11"
   },
   "devDependencies": {
     "grunt": "^0.4.4",
