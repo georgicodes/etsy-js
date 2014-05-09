@@ -73,14 +73,19 @@ class Client
 
   getAuthenticated: (path, token, secret, params..., callback) ->
     url = @buildUrl path, params...
+    console.log "==***==="
+    console.log url
     @etsyOAuth.get url, token, secret, (err, data, res) =>
       return callback(err) if err
+      console.log data
       @handleResponse res, data, callback
 
 
   requestToken: (callback) ->
     @etsyOAuth.getOAuthRequestToken (err, oauth_token, oauth_token_secret) ->
       return callback(err) if err
+      console.log "requestToken"
+      console.log arguments
       loginUrl = arguments[3].login_url
       auth =
         token: oauth_token
@@ -90,6 +95,9 @@ class Client
 
   accessToken: (token, secret, verifier, callback) ->
     @etsyOAuth.getOAuthAccessToken token, secret, verifier, (err, oauth_access_token, oauth_access_token_secret, results) ->
+      console.log('==>Get the access token')
+      console.log oauth_access_token
+      console.log oauth_access_token_secret
       accessToken =
         token: oauth_access_token
         tokenSecret: oauth_access_token_secret
