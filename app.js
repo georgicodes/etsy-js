@@ -3,9 +3,9 @@ express = require('express')
 var etsyjs = require('./lib/etsyjs');
 
 var client = etsyjs.client({
-    clientId: 'cndq8yyle7c6ssplz81bf4od',
-    secret: 'yjnoedkykc',
-    callbackURL: 'http://localhost:3000/authorise'
+    key: 'cndq8yyle7c6ssplz81bf4od'
+//    secret: 'yjnoedkykc',
+//    callbackURL: 'http://localhost:3000/authorise'
 });
 
 //var client = etsyjs.client(process.env.ETSY_API_KEY);
@@ -24,14 +24,14 @@ var callback = function (err, body, headers) {
 };
 
 var etsyUser = client.user('georgiknox');
-//var etsySearch = client.search();
+var etsySearch = client.search();
 //var etsyAddress = client.address('georgiknox');
 //var etsyShop = client.shop('TingBridal');
 //
 //client.requestToken(callback);
 //etsyShop.getShop(callback);
 //etsyAddress.findAllUserAddresses(callback);
-etsyUser.getProfile(callback);
+//etsyUser.find({}, callback);
 //etsyUser.getUser(callback);
 //etsySearch.findAllUsers({
 //    keywords: 'cat,dog',
@@ -39,9 +39,9 @@ etsyUser.getProfile(callback);
 //    offset: 30
 //}, callback);
 //
-//etsyUser.getCirclesContainingUser(function onCallback(err, body, headers){
-//    console.log(body); //json object
-//});
+etsyUser.getCirclesContainingUser({}, function onCallback(err, body, headers){
+    console.log(body); //json object
+});
 //etsySearch.findAllUsers({keywords: 'dog,cat'}, callback);
 
 //consumer.getOAuthRequestToken(function(err, oauth_token, oauth_token_secret, results ){

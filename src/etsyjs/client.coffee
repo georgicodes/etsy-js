@@ -5,10 +5,15 @@ OAuth = require('OAuth')
 
 #Auth = require './auth'
 User = require './user'
+Me = require './me'
 Category = require './category'
 Shop = require './shop'
 Search = require './search'
 Listing = require './listing'
+
+# Specialized error
+class HttpError extends Error
+  constructor: (@message, @statusCode, @headers) ->
 
 class Client
 
@@ -27,8 +32,11 @@ class Client
       'HMAC-SHA1'
     )
 
-  user: ->
-    new User(@)
+  me: ->
+    new Me(@)
+
+  user: (userId) ->
+    new User(userId, @)
 
   category: (tag) ->
     new Category(tag, @)
@@ -43,17 +51,19 @@ class Client
     new Listing(listingId, @)
 
   buildUrl: (path = '/', pageOrQuery = null) ->
+    console.log "query"
+    console.log pageOrQuery
+
     if pageOrQuery? and typeof pageOrQuery == 'object'
-      query = pageOrQuery
+        query = pageOrQuery
     else
       query = {}
-
     query.api_key = @apiKey if @apiKey? && not @apiSecret?
 
     _url = url.format
       protocol: "https:"
       hostname: "openapi.etsy.com"
-      pathname: "/v2" + path
+      pathname: "/v2#{path}"
       query: query
 
     console.log("built url: " + _url)
@@ -71,30 +81,35 @@ class Client
       res.headers)) if body.message and res.statusCode in [400, 401, 403, 404, 410, 422]
     callback null, res.statusCode, body, res.headers
 
-  get: (path, params..., callback) ->
-    @request (
-      uri: @buildUrl path, params...
-      method: 'GET'
-    ), (err, res, body) =>
-      return callback(err) if err
-      @handleResponse res, body, callback
+  get: (path, token, secret, params..., callback) ->
+    console.log("==> Get decider method")
+    if token? and secret?
+      @getAuthenticated path, token, secret, params..., callback
+    else
+      @getUnauthenticated path, params..., callback
 
+  getUnauthenticated: (path, params..., callback) ->
+    console.log("==> Perform unauthenticated request")
+    @request (
+        uri: @buildUrl path, params...
+        method: 'GET'
+      ), (err, res, body) =>
+        return callback(err) if err
+        @handleResponse res, body, callback
 
   getAuthenticated: (path, token, secret, params..., callback) ->
     url = @buildUrl path, params...
-    console.log "==***==="
-    console.log url
-    @etsyOAuth.get url, token, secret, (err, data, res) =>
+    console.log("==> Perform authenticated request on #{url}")
+    @etsyOAuth.get url, token, secret, params..., (err, data, res) =>
+      console.log "err: " + err
       return callback(err) if err
       console.log data
       @handleResponse res, data, callback
 
-
   requestToken: (callback) ->
     @etsyOAuth.getOAuthRequestToken (err, oauth_token, oauth_token_secret) ->
       return callback(err) if err
-      console.log "requestToken"
-      console.log arguments
+      console.log('==> Retrieving the request token')
       loginUrl = arguments[3].login_url
       auth =
         token: oauth_token
@@ -104,15 +119,12 @@ class Client
 
   accessToken: (token, secret, verifier, callback) ->
     @etsyOAuth.getOAuthAccessToken token, secret, verifier, (err, oauth_access_token, oauth_access_token_secret, results) ->
-      console.log('==>Get the access token')
-      console.log oauth_access_token
-      console.log oauth_access_token_secret
+      console.log('==> Retrieving the access token')
       accessToken =
         token: oauth_access_token
         tokenSecret: oauth_access_token_secret
 
       callback null, accessToken
-
 
 module.exports = (apiKey, options) ->
   new Client(apiKey, options)

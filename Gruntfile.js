@@ -13,7 +13,8 @@ module.exports = function(grunt) {
                     'lib/etsyjs/search.js': 'src/etsyjs/search.coffee',
                     'lib/etsyjs/client.js': 'src/etsyjs/client.coffee',
                     'lib/etsyjs/auth.js': 'src/etsyjs/auth.coffee',
-                    'lib/etsyjs/listing.js': 'src/etsyjs/listing.coffee'
+                    'lib/etsyjs/listing.js': 'src/etsyjs/listing.coffee',
+                    'lib/etsyjs/me.js': 'src/etsyjs/me.coffee'
                 }
             }
         }

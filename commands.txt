@@ -1,1 +1,2 @@
 mocha --compilers coffee:coffee-script/register -R spec .
+coffee app.coffee

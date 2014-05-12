@@ -25,8 +25,12 @@ app.get '/', (req, res) ->
         req.session.sec = response.tokenSecret
         res.redirect response.loginUrl
     else
-      client.user().myself req.session.token, req.session.sec, (err, body, headers) ->
-        res.send body.results[0].login_name
+      params = {token: req.session.token, secret: req.session.sec}
+#      params = {limit: 5}
+      client.user('georgiknox').find params, (err, body, headers) ->
+        console.log "error #{err}" if err
+        console.log "Returned result #{body}" if body
+        res.send body.results[0].login_name if body
 
 app.get '/authorise', (req, res) ->
   query = url.parse(req.url, true).query;

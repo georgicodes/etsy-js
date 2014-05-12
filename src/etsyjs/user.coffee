@@ -1,19 +1,12 @@
 class User
 
-  constructor: (@client) ->
-
-  myself: (token, secret, params..., cb) ->
-    @client.getAuthenticated "/users/__SELF__", token, secret, params..., (err, status, body, headers) ->
-      return cb(err) if err
-      if status isnt 200
-        cb(new Error('Find authenticated user'))
-      else
-        cb null, body, headers
+  constructor: (@userId, @client) ->
 
   # Retrieves a User by id
   # '/users/:user_id' GET
-  getUser: (cb) ->
-    @client.get "/users/#{@userId}", (err, status, body, headers) ->
+  find: ({token, secret}, cb) ->
+    params = {}
+    @client.get "/users/#{@userId}", token, secret, params..., (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get user error'))
@@ -41,8 +34,11 @@ class User
 
   # Returns a list of users who have circled this user
   # /users/:user_id/circles GET
-  getCirclesContainingUser: (params..., cb) ->
-    @client.get "/users/#{@userId}/circles", params..., (err, status, body, headers) ->
+  getCirclesContainingUser: ({token, secret, limit, offset}, cb) ->
+    params = {}
+    params.limit = limit if limit?
+    params.offset = offset if offset?
+    @client.get "/users/#{@userId}/circles", token, secret, params..., (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get circles containing user error'))
