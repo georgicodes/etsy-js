@@ -52,9 +52,6 @@ class Client
     new Listing(listingId, @)
 
   buildUrl: (path = '/', pageOrQuery = null) ->
-    console.log "query"
-    console.log pageOrQuery
-
     if pageOrQuery? and typeof pageOrQuery == 'object'
       query = pageOrQuery
     else
