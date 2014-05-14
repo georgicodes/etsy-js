@@ -25,8 +25,7 @@ describe "etsyuser", ->
     nock("https://openapi.etsy.com").get("/v2/users/sparklepony/profile?api_key=testKey")
       .replyWithFile(200, __dirname + '/responses/getUser.single.withProfile.json')
     client.user("sparklepony").profile {}, (err, body, headers) ->
-      console.log body
-      body.results[0].bio.should.equal "I make stuff"
+      body.results[0].Profile.bio.should.equal "I make stuff"
 #      return
 #    return
 #
