@@ -15,17 +15,21 @@ class User
 
   # Retrieves a set of UserAddress objects associated to a User
   # '/users/:user_id/addresses' GET
-  findAllUserAddresses: (params..., cb) ->
-    @client.get "/users/#{@userId}/addresses", params..., (err, status, body, headers) ->
+  addresses: ({token, secret, limit, offset}, cb) ->
+    params = {}
+    params.limit = limit if limit?
+    params.offset = offset if offset?
+    @client.get "/users/#{@userId}/addresses", token, secret, params..., (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Final all user addresses error'))
       else
         cb null, body, headers
 
-  getProfile: (cb) ->
-    params = {includes: 'Profile'}
-    @client.get "/users/#{@userId}", params, (err, status, body, headers) ->
+  # Returns profile for user
+  # /users/:user_id/profile GET
+  profile: ({token, secret}, cb) ->
+    @client.get "/users/#{@userId}/profile", token, secret, (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get user profile error'))
@@ -34,7 +38,7 @@ class User
 
   # Returns a list of users who have circled this user
   # /users/:user_id/circles GET
-  getCirclesContainingUser: ({token, secret, limit, offset}, cb) ->
+  circles: ({token, secret, limit, offset}, cb) ->
     params = {}
     params.limit = limit if limit?
     params.offset = offset if offset?
@@ -47,8 +51,11 @@ class User
 
   # Returns a list of users that are in this user's circle
   # /users/:user_id/connected_users GET
-  getConnectedUsers: (params..., cb) ->
-    @client.get "/users/#{@userId}/connected_users", params..., (err, status, body, headers) ->
+  connectedUsers: ({token, secret, limit, offset}, cb) ->
+    params = {}
+    params.limit = limit if limit?
+    params.offset = offset if offset?
+    @client.get "/users/#{@userId}/connected_users", token, secret, params..., (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get connected users error'))

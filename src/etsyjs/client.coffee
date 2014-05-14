@@ -13,6 +13,7 @@ Listing = require './listing'
 
 # Specialized error
 class HttpError extends Error
+
   constructor: (@message, @statusCode, @headers) ->
 
 class Client
@@ -23,7 +24,7 @@ class Client
     @callbackURL = @options.callbackURL
     @request = request
     @etsyOAuth = new OAuth.OAuth(
-      'https://openapi.etsy.com/v2/oauth/request_token?scope=email_r%20profile_r',
+      'https://openapi.etsy.com/v2/oauth/request_token?scope=email_r%20profile_r%20profile_w%20address_r',
       'https://openapi.etsy.com/v2/oauth/access_token',
       "#{@apiKey}",
       "#{@apiSecret}",
@@ -55,7 +56,7 @@ class Client
     console.log pageOrQuery
 
     if pageOrQuery? and typeof pageOrQuery == 'object'
-        query = pageOrQuery
+      query = pageOrQuery
     else
       query = {}
     query.api_key = @apiKey if @apiKey? && not @apiSecret?
@@ -66,10 +67,10 @@ class Client
       pathname: "/v2#{path}"
       query: query
 
-    console.log("built url: " + _url)
+    console.log("URL: " + _url)
     return _url
 
-  handleResponse: (res, body, callback) ->
+  handleResponse: (res, body, callback)->
     return callback(new HttpError('Error ' + res.statusCode, res.statusCode,
       res.headers)) if Math.floor(res.statusCode / 100) is 5
     if typeof body == 'string'
@@ -79,6 +80,7 @@ class Client
         return callback(err)
     return callback(new HttpError(body.message, res.statusCode,
       res.headers)) if body.message and res.statusCode in [400, 401, 403, 404, 410, 422]
+    console.log body
     callback null, res.statusCode, body, res.headers
 
   get: (path, token, secret, params..., callback) ->
@@ -91,25 +93,23 @@ class Client
   getUnauthenticated: (path, params..., callback) ->
     console.log("==> Perform unauthenticated request")
     @request (
-        uri: @buildUrl path, params...
-        method: 'GET'
-      ), (err, res, body) =>
-        return callback(err) if err
-        @handleResponse res, body, callback
+      uri: @buildUrl path, params...
+      method: 'GET'
+    ), (err, res, body) =>
+      return callback(err) if err
+      @handleResponse res, body, callback
 
   getAuthenticated: (path, token, secret, params..., callback) ->
     url = @buildUrl path, params...
     console.log("==> Perform authenticated request on #{url}")
     @etsyOAuth.get url, token, secret, params..., (err, data, res) =>
-      console.log "err: " + err
       return callback(err) if err
-      console.log data
       @handleResponse res, data, callback
 
   requestToken: (callback) ->
     @etsyOAuth.getOAuthRequestToken (err, oauth_token, oauth_token_secret) ->
-      return callback(err) if err
       console.log('==> Retrieving the request token')
+      return callback(err) if err
       loginUrl = arguments[3].login_url
       auth =
         token: oauth_token

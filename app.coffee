@@ -26,9 +26,8 @@ app.get '/', (req, res) ->
         res.redirect response.loginUrl
     else
       params = {token: req.session.token, secret: req.session.sec}
-#      params = {limit: 5}
-      client.user('georgiknox').find params, (err, body, headers) ->
-        console.log "error #{err}" if err
+      client.shop("boutiqueviolet").find params, (err, body, headers) ->
+        console.log err if err
         console.log "Returned result #{body}" if body
         res.send body.results[0].login_name if body
 
