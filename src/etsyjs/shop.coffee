@@ -12,14 +12,5 @@ class Shop
       else
         cb null, body, headers
 
-  # Retrieves listings for Shop by id
-  # '/shops/:shop_id/listings' GET
-  listings: ({token, secret}, cb) ->
-    @client.get "/shops/#{@shopId}/listings", token, secret, (err, status, body, headers) ->
-      return cb(err) if err
-      if status isnt 200
-        cb(new Error('Get shop listings error'))
-      else
-        cb null, body, headers
 
 module.exports = Shop

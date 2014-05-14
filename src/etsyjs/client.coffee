@@ -48,7 +48,7 @@ class Client
   search: ->
     new Search(@)
 
-  listing: ->
+  listing: (listingId) ->
     new Listing(listingId, @)
 
   buildUrl: (path = '/', pageOrQuery = null) ->
