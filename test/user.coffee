@@ -23,5 +23,3 @@ describe "etsyuser", ->
     client.user("sparklepony").profile {}, (err, body, headers) ->
       body.results[0].Profile.bio.should.equal "I make stuff"
 
-
-

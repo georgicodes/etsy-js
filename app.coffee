@@ -21,12 +21,13 @@ app.use(session())
 app.get '/', (req, res) ->
     if (not req.session.token? && not req.session.sec?)
       client.requestToken (err, response) ->
+        return console.log(err) if err
         req.session.token = response.token
         req.session.sec = response.tokenSecret
         res.redirect response.loginUrl
     else
       params = {token: req.session.token, secret: req.session.sec}
-      client.shop("boutiqueviolet").find params, (err, body, headers) ->
+      client.user("georgiknox").find (err, body, headers) ->
         console.log err if err
         console.log "Returned result #{body}" if body
         res.send body.results[0].login_name if body
@@ -34,6 +35,7 @@ app.get '/', (req, res) ->
 app.get '/authorise', (req, res) ->
   query = url.parse(req.url, true).query;
   verifier = query.oauth_verifier
+  console.log ("with verifier #{verifier} and token #{req.session.token} and secret #{req.session.sec}")
   client.accessToken req.session.token, req.session.sec, verifier, (err, response) ->
     req.session.token = response.token
     req.session.sec = response.tokenSecret

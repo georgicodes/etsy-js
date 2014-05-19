@@ -1,7 +1,8 @@
 # Required modules
 request = require 'request'
 url = require 'url'
-OAuth = require('OAuth')
+OAuth = require 'OAuth'
+util = require('util')
 
 #Auth = require './auth'
 User = require './user'
@@ -13,11 +14,9 @@ Listing = require './listing'
 
 # Specialized error
 class HttpError extends Error
-
   constructor: (@message, @statusCode, @headers) ->
 
 class Client
-
   constructor: (@options) ->
     @apiKey = @options.key
     @apiSecret = @options.secret
@@ -32,6 +31,25 @@ class Client
       "#{@callbackURL}",
       'HMAC-SHA1'
     )
+
+  # nice helper method to set token and secret for each method call
+  # client().auth('myToken, 'mySecret').me().find()
+  auth:(token, secret) ->
+    @authenticatedToken = token
+    @authenticatedSecret = secret
+    return this
+
+  # removes token and secret from options
+#  parseOptions:(options) ->
+#    console.log "options " + util.inspect(options)
+#    if (options.token && options.secret)
+#      for key, value of options
+#        if (key == 'token')
+#          @authenticatedToken = value
+#          delete options[key]
+#        if (key == 'secret')
+#          @authenticatedSecret = value
+#          delete options[key]
 
   me: ->
     new Me(@)
@@ -54,8 +72,10 @@ class Client
   buildUrl: (path = '/', pageOrQuery = null) ->
     if pageOrQuery? and typeof pageOrQuery == 'object'
       query = pageOrQuery
+      query.api_key = @apiKey if @apiKey? && not @apiSecret?
     else
       query = {}
+
     query.api_key = @apiKey if @apiKey? && not @apiSecret?
 
     _url = url.format
@@ -71,19 +91,22 @@ class Client
     return callback(new HttpError('Error ' + res.statusCode, res.statusCode,
       res.headers)) if Math.floor(res.statusCode / 100) is 5
     if typeof body == 'string'
+      console.log body
       try
         body = JSON.parse(body || '{}')
       catch err
+        console.log "Error parsing response: #{body}"
         return callback(err)
     return callback(new HttpError(body.message, res.statusCode,
       res.headers)) if body.message and res.statusCode in [400, 401, 403, 404, 410, 422]
-    console.log body
+    console.log util.inspect body.results
     callback null, res.statusCode, body, res.headers
 
-  get: (path, token, secret, params..., callback) ->
-    console.log("==> Get decider method")
-    if token? and secret?
-      @getAuthenticated path, token, secret, params..., callback
+  get: (path, params..., callback) ->
+#    @parseOptions params
+    console.log("==> Get parent method with params #{params}")
+    if @authenticatedToken? and @authenticatedSecret?
+      @getAuthenticated path, params..., callback
     else
       @getUnauthenticated path, params..., callback
 
@@ -96,10 +119,10 @@ class Client
       return callback(err) if err
       @handleResponse res, body, callback
 
-  getAuthenticated: (path, token, secret, params..., callback) ->
+  getAuthenticated: (path, params..., callback) ->
     url = @buildUrl path, params...
     console.log("==> Perform authenticated request on #{url}")
-    @etsyOAuth.get url, token, secret, params..., (err, data, res) =>
+    @etsyOAuth.get url, @authenticatedToken, @authenticatedSecret, params..., (err, data, res) =>
       return callback(err) if err
       @handleResponse res, data, callback
 

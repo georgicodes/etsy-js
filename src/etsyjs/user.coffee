@@ -1,12 +1,12 @@
-class User
+util = require('util')
 
+class User
   constructor: (@userId, @client) ->
 
   # Retrieves a User by id
   # '/users/:user_id' GET
-  find: ({token, secret}, cb) ->
-    params = {}
-    @client.get "/users/#{@userId}", token, secret, params..., (err, status, body, headers) ->
+  find: (cb) ->
+    @client.get "/users/#{@userId}", (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get user error'))
@@ -15,11 +15,8 @@ class User
 
   # Retrieves a set of UserAddress objects associated to a User
   # '/users/:user_id/addresses' GET
-  addresses: ({token, secret, limit, offset}, cb) ->
-    params = {}
-    params.limit = limit if limit?
-    params.offset = offset if offset?
-    @client.get "/users/#{@userId}/addresses", token, secret, params..., (err, status, body, headers) ->
+  addresses: (cb) ->
+    @client.get "/users/#{@userId}/addresses", (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Final all user addresses error'))

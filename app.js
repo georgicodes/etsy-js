@@ -24,14 +24,14 @@ var callback = function (err, body, headers) {
 };
 
 var etsyUser = client.user('georgiknox');
-var etsySearch = client.search();
+//var etsySearch = client.search();
 //var etsyAddress = client.address('georgiknox');
 //var etsyShop = client.shop('TingBridal');
 //
 //client.requestToken(callback);
 //etsyShop.getShop(callback);
 //etsyAddress.findAllUserAddresses(callback);
-//etsyUser.find({}, callback);
+etsyUser.find(callback);
 //etsyUser.getUser(callback);
 //etsySearch.findAllUsers({
 //    keywords: 'cat,dog',
@@ -39,9 +39,9 @@ var etsySearch = client.search();
 //    offset: 30
 //}, callback);
 //
-etsyUser.getCirclesContainingUser({}, function onCallback(err, body, headers){
-    console.log(body); //json object
-});
+//etsyUser.getCirclesContainingUser({}, function onCallback(err, body, headers){
+//    console.log(body); //json object
+//});
 //etsySearch.findAllUsers({keywords: 'dog,cat'}, callback);
 
 //consumer.getOAuthRequestToken(function(err, oauth_token, oauth_token_secret, results ){
