@@ -1,2 +1,4 @@
+API Call:
+https://openapi.etsy.com/v2/users?keywords=rainbow&api_key=xxx
 mocha --compilers coffee:coffee-script/register -R spec .
 coffee app.coffee

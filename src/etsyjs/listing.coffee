@@ -34,8 +34,8 @@ class Listing
 
   # Collects the list of interesting listings
   # '/listings/interesting' GET
-  interesting: ({token, secret}, cb) ->
-    @client.get "/listings/interesting", token, secret, (err, status, body, headers) ->
+  interesting: (params..., cb) ->
+    @client.get "/listings/interesting", params..., (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get interesting listings error'))

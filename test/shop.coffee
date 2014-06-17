@@ -3,7 +3,7 @@ should = require("chai").should()
 etsyjs = require("../lib/etsyjs")
 client = etsyjs.client({key:'testKey'})
 
-describe "etsyuser", ->
+describe "shop", ->
 
   it "should be able to find a single shop", ->
     nock("https://openapi.etsy.com")

@@ -8,7 +8,7 @@ etsyjs = require('../lib/etsyjs')
 
 # nconf reads in config values from json file
 nconf.argv().env()
-nconf.file({ file: 'config.json' })
+nconf.file({ file: './config.json' })
 
 # instantiate client with key and secret and set callback url
 client = etsyjs.client
@@ -21,24 +21,39 @@ app.use(cookieParser('secEtsy'))
 app.use(session())
 
 app.get '/', (req, res) ->
-  if (not req.session.token? && not req.session.sec?)
+  oauthSession = {token: req.session.token, secret: req.session.sec}
+
+  # if we are accessing the API for the first time, then kick off OAuth dance
+  if (not oauthSession.token? && not oauthSession.secret?)
     client.requestToken (err, response) ->
-      return console.log(err) if err
+      return console.log err if err
       req.session.token = response.token
       req.session.sec = response.tokenSecret
       res.redirect response.loginUrl
   else
-    params = {token: req.session.token, secret: req.session.sec}
-    client.user("georgiknox").find (err, body, headers) ->
+    # else if we have OAuth credentials for this session then use them
+    client.auth(oauthSession.token, oauthSession.secret).user("georgiknox").find (err, body, headers) ->
       console.log err if err
       console.log "Returned result #{body}" if body
       res.send body.results[0].login_name if body
 
+app.get '/shop', (req, res) ->
+  oauthSession = {token: req.session.token, secret: req.session.sec}
+  console.log("fetching a shop...")
+  client.auth(oauthSession.token, oauthSession.secret).shop('ParisienneLuxe').find (err, body, headers) ->
+    console.log err if err
+    console.log "Returned result #{body}" if body
+    res.send body.results[0].shop_name if body
+
 app.get '/authorise', (req, res) ->
+  # parse the query string for OAuth verifier
   query = url.parse(req.url, true).query;
   verifier = query.oauth_verifier
-  console.log ("with verifier #{verifier} and token #{req.session.token} and secret #{req.session.sec}")
+  console.log ("==> with OAuth verifier #{verifier} and token #{req.session.token} and secret #{req.session.sec}")
+
+  # final part of OAuth dance, request access token and secret with given verifier
   client.accessToken req.session.token, req.session.sec, verifier, (err, response) ->
+    # update our session with OAuth token and secret
     req.session.token = response.token
     req.session.sec = response.tokenSecret
     res.redirect '/'

@@ -1,6 +1,5 @@
 # Required modules
 request = require 'request'
-url = require 'url'
 OAuth = require 'OAuth'
 util = require 'util'
 
@@ -32,23 +31,23 @@ class Client
     )
 
   # nice helper method to set token and secret for each method call
-  # client().auth('myToken, 'mySecret').me().find()
+  # client().auth('myToken', 'mySecret').me().find()
   auth: (token, secret) ->
     @authenticatedToken = token
     @authenticatedSecret = secret
     return this
 
   # removes token and secret from options
-#  parseOptions:(options) ->
-#    console.log "options " + util.inspect(options)
-#    if (options.token && options.secret)
-#      for key, value of options
-#        if (key == 'token')
-#          @authenticatedToken = value
-#          delete options[key]
-#        if (key == 'secret')
-#          @authenticatedSecret = value
-#          delete options[key]
+  parseOptions:(options) ->
+    console.log "options " + util.inspect(options)
+    if (options.token && options.secret)
+      for key, value of options
+        if (key == 'token')
+          @authenticatedToken = value
+          delete options[key]
+        if (key == 'secret')
+          @authenticatedSecret = value
+          delete options[key]
 
   me: ->
     new Me(@)
@@ -76,21 +75,20 @@ class Client
       query = {}
 
     query.api_key = @apiKey if @apiKey? && not @apiSecret?
-
-    _url = url.format
+    _url = require('url').format
       protocol: "https:"
       hostname: "openapi.etsy.com"
       pathname: "/v2#{path}"
       query: query
 
-    console.log("URL: " + _url)
+    console.log("API URL is #{_url} ")
     return _url
 
   handleResponse: (res, body, callback)->
     return callback(new HttpError('Error ' + res.statusCode, res.statusCode,
       res.headers)) if Math.floor(res.statusCode / 100) is 5
     if typeof body == 'string'
-      console.log body
+#      console.log body
       try
         body = JSON.parse(body || '{}')
       catch err
@@ -99,12 +97,11 @@ class Client
     return callback(new HttpError(body.message, res.statusCode,
       res.headers)) if body.message and res.statusCode in [400, 401, 403, 404, 410, 422]
 
-    console.log util.inspect body.results
+#    console.log util.inspect body.results
     callback null, res.statusCode, body, res.headers
 
   get: (path, params..., callback) ->
-#    @parseOptions params
-    console.log("==> Get parent method with params #{params}")
+    console.log("==> Client get request with params #{params}")
     if @authenticatedToken? and @authenticatedSecret?
       @getAuthenticated path, params..., callback
     else
