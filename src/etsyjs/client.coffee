@@ -2,9 +2,8 @@
 request = require 'request'
 url = require 'url'
 OAuth = require 'OAuth'
-util = require('util')
+util = require 'util'
 
-#Auth = require './auth'
 User = require './user'
 Me = require './me'
 Category = require './category'

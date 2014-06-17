@@ -4,8 +4,8 @@ class Shop
 
   # Retrieves a Shop by id
   # '/shops/:shop_id' GET
-  find: ({token, secret}, cb) ->
-    @client.get "/shops/#{@shopId}", token, secret, (err, status, body, headers) ->
+  find: (cb) ->
+    @client.get "/shops/#{@shopId}", (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get shop error'))

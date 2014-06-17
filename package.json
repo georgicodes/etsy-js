@@ -2,19 +2,23 @@
   "name": "etsyJS",
   "version": "0.0.1",
   "main": "./lib/etsyjs",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:GeorgiCodes/etsyJS.git"
+  },
   "dependencies": {
     "coffee-script": "^1.7.1",
-    "request": "^2.34.0",
-    "nock": "^0.28.2",
-    "chai": "^1.9.1",
     "oauth": "^0.9.11",
     "prettyjson": "^1.0.0",
-    "util": "^0.10.3"
+    "request": "^2.34.0"
   },
   "devDependencies": {
     "grunt": "^0.4.4",
+    "nock": "^0.28.2",
+    "chai": "^1.9.1",
     "grunt-contrib-coffee": "^0.10.1",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-mocha-test": "^0.10.2"
+    "grunt-mocha-test": "^0.10.2",
+    "grunt-coffeelint": "0.0.10"
   }
 }

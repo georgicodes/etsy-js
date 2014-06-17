@@ -25,8 +25,8 @@ class User
 
   # Returns profile for user
   # /users/:user_id/profile GET
-  profile: ({token, secret}, cb) ->
-    @client.get "/users/#{@userId}/profile", token, secret, (err, status, body, headers) ->
+  profile: (cb) ->
+    @client.get "/users/#{@userId}/profile", (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get user profile error'))

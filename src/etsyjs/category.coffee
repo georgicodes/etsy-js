@@ -4,8 +4,8 @@ class Category
 
   # Retrieves a top-level Category by tag
   # '/categories/:tag' GET
-  find: ({token, secret}, cb) ->
-    @client.get "/categories/#{@tag}", token, secret, (err, status, body, headers) ->
+  find: (cb) ->
+    @client.get "/categories/#{@tag}", (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get categories error'))

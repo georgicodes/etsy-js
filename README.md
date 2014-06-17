@@ -75,3 +75,10 @@ app.get '/authorise', (req, res) ->
     req.session.sec = response.tokenSecret
     res.redirect '/'
 ```
+
+# Development
+
+## Running the tests
+```js
+$ grunt test
+```
