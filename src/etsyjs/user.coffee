@@ -1,6 +1,7 @@
 util = require('util')
 
 class User
+
   constructor: (@userId, @client) ->
 
   # Retrieves a User by id

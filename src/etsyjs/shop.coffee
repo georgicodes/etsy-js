@@ -25,5 +25,4 @@ class Shop
       else
         cb null, body, headers
 
-
 module.exports = Shop

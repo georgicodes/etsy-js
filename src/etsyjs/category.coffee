@@ -32,8 +32,8 @@ class Category
       else
         cb null, body, headers
 
-  # Retrieves a top-level Category by tag
-  # '/categories/:tag' GET
+# Retrieves a top-level Category by tag
+# '/categories/:tag' GET
 #  subCategory: (subtag, {token, secret}, cb) ->
 #    @client.get "/categories/#{@tag}/subtag", token, secret, (err, status, body, headers) ->
 #      return cb(err) if err

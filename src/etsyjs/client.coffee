@@ -33,7 +33,7 @@ class Client
 
   # nice helper method to set token and secret for each method call
   # client().auth('myToken, 'mySecret').me().find()
-  auth:(token, secret) ->
+  auth: (token, secret) ->
     @authenticatedToken = token
     @authenticatedSecret = secret
     return this
