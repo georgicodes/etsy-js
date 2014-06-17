@@ -98,6 +98,7 @@ class Client
         return callback(err)
     return callback(new HttpError(body.message, res.statusCode,
       res.headers)) if body.message and res.statusCode in [400, 401, 403, 404, 410, 422]
+
     console.log util.inspect body.results
     callback null, res.statusCode, body, res.headers
 

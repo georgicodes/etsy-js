@@ -14,8 +14,8 @@ class Category
 
   # Retrieves all top-level Categories
   # '/taxonomy/categories' GET
-  topLevelCategories: ({token, secret}, cb) ->
-    @client.get "/taxonomy/categories", token, secret, (err, status, body, headers) ->
+  topLevelCategories: (cb) ->
+    @client.get "/taxonomy/categories", (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get top level categories error'))
@@ -24,8 +24,8 @@ class Category
 
   # Retrieves children of a top-level Category by tag
   # '/taxonomy/categories/:tag' GET
-  topLevelCategoryChildren: ({token, secret}, cb) ->
-    @client.get "/taxonomy/categories/#{@tag}", token, secret, (err, status, body, headers) ->
+  topLevelCategoryChildren: (cb) ->
+    @client.get "/taxonomy/categories/#{@tag}", (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get categories error'))

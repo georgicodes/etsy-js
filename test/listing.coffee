@@ -12,3 +12,20 @@ describe "etsyuser", ->
 
     client.listing(59759273).find (err, body, headers) ->
       body.results[0].listing_id.should.equal 59759273
+
+  it "should be able to find all active listings", ->
+    nock("https://openapi.etsy.com")
+    .get("/v2/listings/active?api_key=testKey")
+    .replyWithFile(200, __dirname + '/responses/listing/findAllListingActive.category.json')
+
+    client.listing().active (err, body, headers) ->
+      body.results[0].listing_id.should.equal 69065674
+
+  it "should be able to find all active listings by category", ->
+    nock("https://openapi.etsy.com")
+    .get("/v2/listings/active?category=accessories&api_key=testKey")
+    .replyWithFile(200, __dirname + '/responses/listing/findAllListingActive.category.json')
+
+    params = {category: "accessories"}
+    client.listing().active params, (err, body, headers) ->
+      body.results[0].listing_id.should.equal 69065674

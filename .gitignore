@@ -3,3 +3,4 @@ npm-debug.log
 config.json
 .idea
 *.iml
+examples/config.json

@@ -4,11 +4,13 @@ cookieParser = require('cookie-parser')
 url = require('url')
 fs = require('fs')
 nconf = require('nconf')
-etsyjs = require('./lib/etsyjs')
+etsyjs = require('../lib/etsyjs')
 
+# nconf reads in config values from json file
 nconf.argv().env()
 nconf.file({ file: 'config.json' })
 
+# instantiate client with key and secret and set callback url
 client = etsyjs.client
   key: nconf.get('key')
   secret: nconf.get('secret')

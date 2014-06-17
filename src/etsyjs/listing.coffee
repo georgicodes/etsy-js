@@ -14,18 +14,18 @@ class Listing
 
   # Finds all active Listings.
   # '/listings/active' GET
-  active: ({token, secret}, cb) ->
-    @client.get "/listings/active", token, secret, (err, status, body, headers) ->
+  active: (params..., cb) ->
+    @client.get "/listings/active", params..., (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
-        cb(new Error('Get trending listings error'))
+        cb(new Error('Get active listings error'))
       else
         cb null, body, headers
 
   # Collects the list of listings used to generate the trending listing page
   # '/listings/trending' GET
-  trending: ({token, secret}, cb) ->
-    @client.get "/listings/trending", token, secret, (err, status, body, headers) ->
+  trending: (params..., cb) ->
+    @client.get "/listings/trending", params..., (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get trending listings error'))
