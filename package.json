@@ -24,5 +24,9 @@
     "grunt-mocha-test": "0.10.x",
     "nconf": "0.6.x",
     "nock": "0.28.x"
+  },
+  "scripts": {
+    "test": "grunt test"
   }
+
 }
