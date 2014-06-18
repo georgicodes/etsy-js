@@ -43,6 +43,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-coffeelint');
     grunt.loadNpmTasks('grunt-mocha-test');
+    grunt.loadNpmTasks('grunt-release');
 
     // task(s)
     grunt.registerTask('default', ['coffee', 'watch', 'coffeelint', 'mochaTest']);

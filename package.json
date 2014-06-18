@@ -22,11 +22,11 @@
     "grunt-contrib-coffee": "0.10.x",
     "grunt-contrib-watch": "0.6.x",
     "grunt-mocha-test": "0.10.x",
+    "grunt-release": "0.7.x",
     "nconf": "0.6.x",
     "nock": "0.28.x"
   },
   "scripts": {
     "test": "grunt test"
   }
-
 }
