@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/GeorgiCodes/etsyJS.svg?branch=master)](https://travis-ci.org/GeorgiCodes/etsyJS)
+
 #etsyJS
 
 etsyJS is a library for nodejs to access the etsy v2 api
