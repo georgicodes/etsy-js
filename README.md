@@ -1,19 +1,18 @@
 [![Build Status](https://travis-ci.org/GeorgiCodes/etsyJS.svg?branch=master)](https://travis-ci.org/GeorgiCodes/etsyJS)
-
 #etsyJS
 
-etsyJS is a library for nodejs to access the etsy v2 api
+etsy-js is a library for nodejs to access the etsy v2 api
 
 # Installation
 Install the latest stable version
 ```
-$ npm install etsyJS
+$ npm install etsy-js
 ```
 
 Bleeding edge version
 ```
-$ git clone https://github.com/georgiknox/etsyJS.git
-$ cd etsyJS
+$ git clone https://github.com/georgiknox/etsy-js.git
+$ cd etsy-js
 $ npm install
 ```
 
