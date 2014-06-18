@@ -8,7 +8,7 @@ etsyjs = require('../lib/etsyjs')
 
 # nconf reads in config values from json file
 nconf.argv().env()
-nconf.file({ file: '/Users/georgi/dev/projects/etsyJS/examples/config.json' })
+nconf.file({ file: './examples/config.json' })
 
 # instantiate client with key and secret and set callback url
 client = etsyjs.client
@@ -32,7 +32,7 @@ app.get '/', (req, res) ->
       res.redirect response.loginUrl
   else
     # else if we have OAuth credentials for this session then use them
-    client.auth(oauthSession.token, oauthSession.secret).user("georgiknox").find (err, body, headers) ->
+    client.auth(oauthSession.token, oauthSession.secret).user("sparkleprincesspony").find (err, body, headers) ->
       console.log err if err
       console.dir "Returned result #{body}" if body
       res.send body.results[0] if body
@@ -48,7 +48,7 @@ app.get '/update', (req, res) ->
   oauthSession = {token: req.session.token, secret: req.session.sec}
   console.log("updating profile...")
   updatedProfile = {user_id: "georgiknox", city: "New York City"}
-  client.auth(oauthSession.token, oauthSession.secret).user("georgiknox").updateUserProfile updatedProfile, (err, body, headers) ->
+  client.auth(oauthSession.token, oauthSession.secret).user("sparkleprincesspony").updateUserProfile updatedProfile, (err, body, headers) ->
     console.log err if err
     res.send body.results[0] if body
 
