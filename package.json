@@ -7,9 +7,8 @@
     "type": "git",
     "url": "git@github.com:GeorgiCodes/etsy-js.git"
   },
-//  "scripts": {
-//    "test": "grunt test"
-//  },
+  "scripts": {
+  },
   "dependencies": {
     "coffee-script": "1.7.x",
     "oauth": "0.9.x",
