@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/GeorgiCodes/etsyJS.svg?branch=master)](https://travis-ci.org/GeorgiCodes/etsyJS)
-#etsyJS
+#etsy-js
 
 etsy-js is a library for nodejs to access the etsy v2 api
 
@@ -19,7 +19,7 @@ $ npm install
 # Usage
 
 ## Public Mode
-The Etsy API has two modes: public, and authenticated. Public mode only requires an API key (available from http://developer.etsy.com ):
+The Etsy API has two modes: public, and authenticated. Public mode only requires an API key (available from http://developer.etsy.com ). 
 
 ```js
 var etsyjs = require('etsyjs');
@@ -38,10 +38,16 @@ var etsyShop = client.shop('shopALot');
 From there, you can make any non-authenticated calls to the API that you need.
 
 ## Authenticated Mode
-The Etsy API has support for both retrieval of extended information and write support for authenticated users. Authentication can either be performed from the console or from within a Ruby web application.
+The Etsy API has support for both retrieval of extended information and write support for authenticated users. Authentication can either be performed from within a web application.
 
-### Web Application
-An coffeescript example of accessing the API via an express app, you need to set a client, secret and callbackURL
+After you have completed the OAuth process, to use authenticated mode, simply call the `.auth(token,secret)` method after client, then all your calls will be authenticated, in this example its `find`
+```
+  client.auth(oauthSession.token, oauthSession.secret).user("sparkleprincesspony").find (err, body, headers) ->
+    console.log err if err
+```
+
+#### Web Application
+An coffeescript example of accessing the API using OAuth and an express app. You need to set a client, secret and callbackURL.
 
 ```
 session = require('express-session')
@@ -59,22 +65,37 @@ app.use(cookieParser('secEtsy'))
 app.use(session())
 
 app.get '/', (req, res) ->
-    if (not req.session.token? && not req.session.sec?)
-      client.requestToken (err, response) ->
-        req.session.token = response.token
-        req.session.sec = response.tokenSecret
-        res.redirect response.loginUrl
-    else
-      client.user().myself req.session.token, req.session.sec, (err, body, headers) ->
-        res.send body.results[0].login_name
+  oauthSession = {token: req.session.token, secret: req.session.sec}
 
-app.get '/authorise', (req, res) ->
-  query = url.parse(req.url, true).query;
-  verifier = query.oauth_verifier
-  client.accessToken req.session.token, req.session.sec, verifier, (err, response) ->
-    req.session.token = response.token
-    req.session.sec = response.tokenSecret
-    res.redirect '/'
+  # if we are accessing the API for the first time, then kick off OAuth dance
+  if (not oauthSession.token? && not oauthSession.secret?)
+    client.requestToken (err, response) ->
+      return console.log err if err
+      req.session.token = response.token
+      req.session.sec = response.tokenSecret
+      res.redirect response.loginUrl
+  else
+    # else if we have OAuth credentials for this session then use them
+    client.auth(oauthSession.token, oauthSession.secret).user("sparkleprincesspony").find (err, body, headers) ->
+      console.log err if err
+      console.dir "Returned result #{body}" if body
+      res.send body.results[0] if body
+
+  app.get '/authorise', (req, res) ->
+    # parse the query string for OAuth verifier
+    query = url.parse(req.url, true).query;
+    verifier = query.oauth_verifier
+    console.log ("==> with OAuth verifier #{verifier} and token #{req.session.token} and secret #{req.session.sec}")
+  
+    # final part of OAuth dance, request access token and secret with given verifier
+    client.accessToken req.session.token, req.session.sec, verifier, (err, response) ->
+      # update our session with OAuth token and secret
+      req.session.token = response.token
+      req.session.sec = response.tokenSecret
+      res.redirect '/'
+  
+  server = app.listen 3000, ->
+    console.log 'Listening on port %d', server.address().port
 ```
 
 # Development
