@@ -37,18 +37,6 @@ class Client
     @authenticatedSecret = secret
     return this
 
-  # removes token and secret from options
-  parseOptions:(options) ->
-    console.log "options " + util.inspect(options)
-    if (options.token && options.secret)
-      for key, value of options
-        if (key == 'token')
-          @authenticatedToken = value
-          delete options[key]
-        if (key == 'secret')
-          @authenticatedSecret = value
-          delete options[key]
-
   me: ->
     new Me(@)
 
@@ -81,18 +69,17 @@ class Client
       pathname: "/v2#{path}"
       query: query
 
-    console.log("API URL is #{_url} ")
+    console.dir "API URL is #{_url} "
     return _url
 
   handleResponse: (res, body, callback)->
     return callback(new HttpError('Error ' + res.statusCode, res.statusCode,
       res.headers)) if Math.floor(res.statusCode / 100) is 5
     if typeof body == 'string'
-#      console.log body
       try
         body = JSON.parse(body || '{}')
       catch err
-        console.log "Error parsing response: #{body}"
+        console.dir "Error parsing response: #{body}"
         return callback(err)
     return callback(new HttpError(body.message, res.statusCode,
       res.headers)) if body.message and res.statusCode in [400, 401, 403, 404, 410, 422]
@@ -100,15 +87,24 @@ class Client
 #    console.log util.inspect body.results
     callback null, res.statusCode, body, res.headers
 
+  # api GET requests
   get: (path, params..., callback) ->
-    console.log("==> Client get request with params #{params}")
+    console.dir "==> Client get request with params #{params}"
     if @authenticatedToken? and @authenticatedSecret?
       @getAuthenticated path, params..., callback
     else
       @getUnauthenticated path, params..., callback
 
+  # api PUT requests
+  put: (path, content, callback) ->
+    url = @buildUrl path
+    console.dir "==> Perform put request on #{url} with #{JSON.stringify content}"
+    @etsyOAuth.put url, @authenticatedToken, @authenticatedSecret, content,  (err, data, res) =>
+      return callback(err) if err
+      @handleResponse res, data, callback
+
   getUnauthenticated: (path, params..., callback) ->
-    console.log("==> Perform unauthenticated request")
+    console.dir "==> Perform unauthenticated request"
     @request (
       uri: @buildUrl path, params...
       method: 'GET'
@@ -118,14 +114,14 @@ class Client
 
   getAuthenticated: (path, params..., callback) ->
     url = @buildUrl path, params...
-    console.log("==> Perform authenticated request on #{url}")
+    console.dir "==> Perform authenticated request on #{url}"
     @etsyOAuth.get url, @authenticatedToken, @authenticatedSecret, params..., (err, data, res) =>
       return callback(err) if err
       @handleResponse res, data, callback
 
   requestToken: (callback) ->
     @etsyOAuth.getOAuthRequestToken (err, oauth_token, oauth_token_secret) ->
-      console.log('==> Retrieving the request token')
+      console.dir "==> Retrieving the request token"
       return callback(err) if err
       loginUrl = arguments[3].login_url
       auth =
@@ -136,7 +132,7 @@ class Client
 
   accessToken: (token, secret, verifier, callback) ->
     @etsyOAuth.getOAuthAccessToken token, secret, verifier, (err, oauth_access_token, oauth_access_token_secret, results) ->
-      console.log('==> Retrieving the access token')
+      console.dir "==> Retrieving the access token"
       accessToken =
         token: oauth_access_token
         tokenSecret: oauth_access_token_secret

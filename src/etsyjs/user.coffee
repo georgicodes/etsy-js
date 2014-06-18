@@ -34,13 +34,20 @@ class User
       else
         cb null, body, headers
 
+  # Updates profile for user
+  # /users/:user_id/profile PUT
+  updateUserProfile: (user, cb) ->
+    @client.put "/users/#{@userId}/profile", user, (err, status, body, headers) ->
+      return cb(err) if err
+      if status isnt 200
+        cb(new Error('Update user profile error'))
+      else
+        cb null, body, headers
+
   # Returns a list of users who have circled this user
   # /users/:user_id/circles GET
-  circles: ({token, secret, limit, offset}, cb) ->
-    params = {}
-    params.limit = limit if limit?
-    params.offset = offset if offset?
-    @client.get "/users/#{@userId}/circles", token, secret, params..., (err, status, body, headers) ->
+  circles: (params..., cb) ->
+    @client.get "/users/#{@userId}/circles", params..., (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get circles containing user error'))
@@ -49,11 +56,8 @@ class User
 
   # Returns a list of users that are in this user's circle
   # /users/:user_id/connected_users GET
-  connectedUsers: ({token, secret, limit, offset}, cb) ->
-    params = {}
-    params.limit = limit if limit?
-    params.offset = offset if offset?
-    @client.get "/users/#{@userId}/connected_users", token, secret, params..., (err, status, body, headers) ->
+  connectedUsers: (params..., cb) ->
+    @client.get "/users/#{@userId}/connected_users", params..., (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Get connected users error'))
