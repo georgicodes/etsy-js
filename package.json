@@ -1,10 +1,10 @@
 {
-  "name": "etsyJS",
+  "name": "etsy-js",
   "version": "0.0.1",
   "main": "./lib/etsyjs",
   "repository": {
     "type": "git",
-    "url": "git@github.com:GeorgiCodes/etsyJS.git"
+    "url": "git@github.com:GeorgiCodes/etsy-js.git"
   },
   "dependencies": {
     "coffee-script": "1.7.x",
