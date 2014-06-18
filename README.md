@@ -1,9 +1,7 @@
 etsy-js
 =======
 
-etsy-js is a library for nodejs to access the etsy v2 api
-
-[![Build Status](https://travis-ci.org/GeorgiCodes/etsyJS.svg?branch=master)](https://travis-ci.org/GeorgiCodes/etsyJS)
+etsy-js is an wrapper in nodejs to access the etsy v2 api.
 
 # Installation
 Install the latest stable version
