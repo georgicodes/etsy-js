@@ -11,7 +11,7 @@ $ npm install etsy-js
 
 Bleeding edge version
 ```
-$ git clone https://github.com/georgiknox/etsy-js.git
+$ git clone https://github.com/GeorgiCodes/etsy-js.git
 $ cd etsy-js
 $ npm install
 ```

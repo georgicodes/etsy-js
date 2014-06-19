@@ -9,6 +9,7 @@ Category = require './category'
 Shop = require './shop'
 Search = require './search'
 Listing = require './listing'
+Address = require './address'
 
 # Specialized error
 class HttpError extends Error
@@ -21,7 +22,7 @@ class Client
     @callbackURL = @options.callbackURL
     @request = request
     @etsyOAuth = new OAuth.OAuth(
-      'https://openapi.etsy.com/v2/oauth/request_token?scope=email_r%20profile_r%20profile_w%20address_r',
+      'https://openapi.etsy.com/v2/oauth/request_token?scope=email_r%20profile_r%20profile_w%20address_r%20address_w',
       'https://openapi.etsy.com/v2/oauth/access_token',
       "#{@apiKey}",
       "#{@apiSecret}",
@@ -54,6 +55,9 @@ class Client
 
   listing: (listingId) ->
     new Listing(listingId, @)
+
+  address: (userId) ->
+    new Address(userId, @)
 
   buildUrl: (path = '/', pageOrQuery = null) ->
     if pageOrQuery? and typeof pageOrQuery == 'object'
@@ -98,13 +102,29 @@ class Client
   # api PUT requests
   put: (path, content, callback) ->
     url = @buildUrl path
-    console.dir "==> Perform put request on #{url} with #{JSON.stringify content}"
+    console.dir "==> Perform PUT request on #{url} with #{JSON.stringify content}"
     @etsyOAuth.put url, @authenticatedToken, @authenticatedSecret, content,  (err, data, res) =>
       return callback(err) if err
       @handleResponse res, data, callback
 
+  # api POST requests
+  post: (path, content, callback) ->
+    url = @buildUrl path
+    console.dir "==> Perform POST request on #{url} with #{JSON.stringify content}"
+    @etsyOAuth.post url, @authenticatedToken, @authenticatedSecret, content,  (err, data, res) =>
+      return callback(err) if err
+      @handleResponse res, data, callback
+
+  # api DELETE requests
+  delete: (path, callback) ->
+    url = @buildUrl path
+    console.dir "==> Perform DELETE request on #{url}"
+    @etsyOAuth.delete url, @authenticatedToken, @authenticatedSecret, (err, data, res) =>
+      return callback(err) if err
+      @handleResponse res, data, callback
+
   getUnauthenticated: (path, params..., callback) ->
-    console.dir "==> Perform unauthenticated request"
+    console.dir "==> Perform unauthenticated GET request"
     @request (
       uri: @buildUrl path, params...
       method: 'GET'
@@ -114,8 +134,8 @@ class Client
 
   getAuthenticated: (path, params..., callback) ->
     url = @buildUrl path, params...
-    console.dir "==> Perform authenticated request on #{url}"
-    @etsyOAuth.get url, @authenticatedToken, @authenticatedSecret, params..., (err, data, res) =>
+    console.dir "==> Perform authenticated GET request on #{url}"
+    @etsyOAuth.get url, @authenticatedToken, @authenticatedSecret, (err, data, res) =>
       return callback(err) if err
       @handleResponse res, data, callback
 

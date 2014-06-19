@@ -32,24 +32,26 @@ app.get '/', (req, res) ->
       res.redirect response.loginUrl
   else
     # else if we have OAuth credentials for this session then use them
-    client.auth(oauthSession.token, oauthSession.secret).user("sparkleprincesspony").find (err, body, headers) ->
+    client.auth(oauthSession.token, oauthSession.secret).get '/users/etsyjs', {}, (err, status, body, headers) ->
       console.log err if err
-      console.dir "Returned result #{body}" if body
+      console.dir(body) if body
       res.send body.results[0] if body
 
 app.get '/shop', (req, res) ->
   oauthSession = {token: req.session.token, secret: req.session.sec}
   console.log("fetching a shop...")
-  client.auth(oauthSession.token, oauthSession.secret).shop('ParisienneLuxe').find (err, body, headers) ->
+  client.auth(oauthSession.token, oauthSession.secret).get '/shops/ParisienneLuxe', {}, (err, status, body, headers) ->
     console.log err if err
+    console.dir(body) if body
     res.send body.results[0].shop_name if body
 
 app.get '/update', (req, res) ->
   oauthSession = {token: req.session.token, secret: req.session.sec}
   console.log("updating profile...")
-  updatedProfile = {user_id: "georgiknox", city: "New York City"}
-  client.auth(oauthSession.token, oauthSession.secret).user("sparkleprincesspony").updateUserProfile updatedProfile, (err, body, headers) ->
+  updatedProfile = {user_id: "etsyjs", city: "New York City"}
+  client.auth(oauthSession.token, oauthSession.secret).put "/users/etsyjs/profile", updatedProfile, (err, status, body, headers) ->
     console.log err if err
+    console.dir(body) if body
     res.send body.results[0] if body
 
 app.get '/authorise', (req, res) ->

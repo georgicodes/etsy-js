@@ -6,3 +6,4 @@ etsyjs = module.exports =
   me: require './etsyjs/me'
   search: require './etsyjs/search'
   listing: require './etsyjs/listing'
+  address: require './etsyjs/address'
