@@ -27,5 +27,6 @@
     "grunt-release": "0.7.x",
     "nconf": "0.6.x",
     "nock": "0.28.x"
-  }
+  },
+  "engine": "node 0.10.x"
 }
