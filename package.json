@@ -1,14 +1,13 @@
 {
   "name": "etsy-js",
   "description": "etsy-js is a nodejs wrapper for the etsy v2 api.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "./lib/etsyjs",
   "repository": {
     "type": "git",
     "url": "git@github.com:GeorgiCodes/etsy-js.git"
   },
-  "scripts": {
-  },
+  "scripts": {},
   "dependencies": {
     "coffee-script": "1.7.x",
     "oauth": "0.9.x",
