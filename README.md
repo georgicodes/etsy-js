@@ -1,7 +1,7 @@
 etsy-js
 =======
 
-etsy-js is an wrapper in nodejs to access the etsy v2 api.
+etsy-js is an asynchronous nodeJS wrapper for the etsy v2 api.
 
 # Installation
 Install the latest stable version
