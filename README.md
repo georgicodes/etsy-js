@@ -1,4 +1,4 @@
-etsy-js [![Build Status](https://travis-ci.org/GeorgiCodes/etsy-js.svg?branch=0.0.2)](https://travis-ci.org/GeorgiCodes/etsy-js)
+etsy-js
 =======
 
 etsy-js is an wrapper in nodejs to access the etsy v2 api.
