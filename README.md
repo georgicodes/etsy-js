@@ -16,13 +16,19 @@ $ cd etsy-js
 $ npm install
 ```
 
+Then require the module
+
+```js
+var etsyjs = require('etsy-js');
+```
+
 # Usage
 
 ## Public Mode
 The Etsy API has two modes: public, and authenticated. Public mode only requires an API key (available from http://developer.etsy.com ). 
 
 ```js
-var etsyjs = require('etsyjs');
+var etsyjs = require('etsy-js');
 var client = etsyjs.client('your_api_key');
 
 // direct API calls
@@ -53,7 +59,7 @@ An coffeescript example of accessing the API using OAuth and an express app. You
 session = require('express-session')
 cookieParser = require('cookie-parser')
 url = require('url')
-etsyjs = require('etsyjs')
+etsyjs = require('etsy-js')
 
 client = etsyjs.client
   key: 'key'
