@@ -144,6 +144,7 @@ etsyUser.find(callback); //json
 * Rate limiting helper method
 * More helper methods!!
 * Flesh out me.coffee (should just call user with __SELF__) with tests
+* use logging not console
 
 # Development
 
