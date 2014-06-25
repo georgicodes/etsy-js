@@ -16,22 +16,16 @@ $ cd etsy-js
 $ npm install
 ```
 
-Then require the module
-
-```js
-var etsyjs = require('etsy-js');
-```
-
 # Usage
 
 ## Public Mode
-The Etsy API has two modes: public, and authenticated. Public mode only requires an API key (available from http://developer.etsy.com ). 
+The Etsy API has two modes: public, and authenticated. Public mode only requires an API key (available from http://developer.etsy.com ).
 
 ```js
 var etsyjs = require('etsy-js');
 var client = etsyjs.client('your_api_key');
 
-// direct API calls
+// direct API calls (GET / PUT / POST / DELETE)
 client.get('/users/sparkleprincess', {}, function (err, status, body, headers) {
   console.log(body); //json object
 });
@@ -40,30 +34,40 @@ client.get('/users/sparkleprincess', {}, function (err, status, body, headers) {
 var etsyUser = client.user('sparkleprincess');
 var etsySearch = client.search();
 var etsyShop = client.shop('shopALot');
+
+etsyUser.find(function(err, body, headers) {
+  console.log(body); //json object
+});
 ```
-From there, you can make any non-authenticated calls to the API that you need.
+You can make any non-authenticated calls to the API that you need.
 
 ## Authenticated Mode
-The Etsy API has support for both retrieval of extended information and write support for authenticated users. Authentication can either be performed from within a web application.
+The Etsy API has support for both retrieval of extended information and write support for authenticated users. Authentication can be performed from within a web application.
 
-After you have completed the OAuth process, to use authenticated mode, simply call the `.auth(token,secret)` method after client, then all your calls will be authenticated, in this example its `find`
-```
-  client.auth(oauthSession.token, oauthSession.secret).user("sparkleprincesspony").find (err, body, headers) ->
-    console.log err if err
+In authenticated mode, you need to set a client, secret and callbackURL.
+```js
+var etsyjs = require('etsy-js');
+
+var client = etsyjs.client({
+  key: 'key',
+  secret: 'secret',
+  callbackURL: 'http://localhost:3000/authorise'
+});
 ```
 
-#### Web Application
-An coffeescript example of accessing the API using OAuth and an express app. You need to set a client, secret and callbackURL.
-
-```
+In this mode, you'll need to store the request token and secret before redirecting to the verification URL.
+A simple example in coffeescript using Express and Express Sessions:
+```js
+express = require('express')
 session = require('express-session')
 cookieParser = require('cookie-parser')
 url = require('url')
 etsyjs = require('etsy-js')
 
+# instantiate client with key and secret and set callback url
 client = etsyjs.client
-  key: 'key'
-  secret: 'secret'
+  key: nconf.get('key')
+  secret: nconf.get('secret')
   callbackURL: 'http://localhost:3000/authorise'
 
 app = express()
@@ -71,38 +75,75 @@ app.use(cookieParser('secEtsy'))
 app.use(session())
 
 app.get '/', (req, res) ->
-  oauthSession = {token: req.session.token, secret: req.session.sec}
+  client.requestToken (err, response) ->
+    return console.log err if err
+    req.session.token = response.token
+    req.session.sec = response.tokenSecret
+    res.redirect response.loginUrl
 
-  # if we are accessing the API for the first time, then kick off OAuth dance
-  if (not oauthSession.token? && not oauthSession.secret?)
-    client.requestToken (err, response) ->
-      return console.log err if err
-      req.session.token = response.token
-      req.session.sec = response.tokenSecret
-      res.redirect response.loginUrl
-  else
-    # else if we have OAuth credentials for this session then use them
-    client.auth(oauthSession.token, oauthSession.secret).user("sparkleprincesspony").find (err, body, headers) ->
-      console.log err if err
-      console.dir "Returned result #{body}" if body
-      res.send body.results[0] if body
+app.get '/authorise', (req, res) ->
+  # parse the query string for OAuth verifier
+  query = url.parse(req.url, true).query;
+  verifier = query.oauth_verifier
 
-  app.get '/authorise', (req, res) ->
-    # parse the query string for OAuth verifier
-    query = url.parse(req.url, true).query;
-    verifier = query.oauth_verifier
-    console.log ("==> with OAuth verifier #{verifier} and token #{req.session.token} and secret #{req.session.sec}")
-  
-    # final part of OAuth dance, request access token and secret with given verifier
-    client.accessToken req.session.token, req.session.sec, verifier, (err, response) ->
-      # update our session with OAuth token and secret
-      req.session.token = response.token
-      req.session.sec = response.tokenSecret
-      res.redirect '/'
-  
-  server = app.listen 3000, ->
-    console.log 'Listening on port %d', server.address().port
+  # final part of OAuth dance, request access token and secret with given verifier
+  client.accessToken req.session.token, req.session.sec, verifier, (err, response) ->
+    # update our session with OAuth token and secret
+    req.session.token = response.token
+    req.session.sec = response.tokenSecret
+    res.redirect '/find'
+
+app.get '/find', (req, res) ->
+  # we now have OAuth credentials for this session and can perform authenticated requests
+  client.auth(req.session.token, req.session.sec).user("etsyjs").find (err, body, headers) ->
+    console.log err if err
+    console.dir(body) if body
+    res.send body.results[0] if body
+
+server = app.listen 3000, ->
+  console.log 'Listening on port %d', server.address().port
 ```
+## API Callback Strucutre
+
+All the callbacks fwill take first an error argument, then a data argument, like this:
+```js
+etsyUser.find(function(err, body, headers) {
+  console.log("error: " + err);
+  console.log("data: " + body);
+  console.log("headers:" + headers);
+});
+```
+
+## Pagination
+Pagination is supported, simply pass through params as follows:
+
+```js
+var params = {
+  keywords: "rainbow"
+  offset: 1,
+  limit: 25
+};
+
+client.search().findAllUsers(params, function(err, body, headers) {
+  console.log("data: " + body);
+});
+```
+
+## Etsy authenticated user api
+
+FILL ME IN with more examples
+
+##### Get information about the user (GET /user)
+```js
+etsyUser.find(callback); //json
+```
+
+# TODO
+* integrate with travis properly
+* pass in scope?
+* Rate limiting helper method
+* More helper methods!!
+* Flesh out me.coffee (should just call user with __SELF__) with tests
 
 # Development
 
@@ -110,3 +151,8 @@ app.get '/', (req, res) ->
 ```js
 $ grunt test
 ```
+
+# Contributions
+
+Thanks to the ruby etsy api wrapper as I used their fixture tests data for the etsy-js tests and README outline.
+Thanks to octonode for the inspiration to make this API in coffeescript.
