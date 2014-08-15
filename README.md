@@ -131,14 +131,14 @@ client.search().findAllUsers(params, function(err, body, headers) {
 
 ## Etsy authenticated user api
 
-FILL ME IN with more examples
+More examples to come...
 
 ##### Get information about the user (GET /user)
 ```js
 etsyUser.find(callback); //json
 ```
 
-# TODO
+# Next Steps
 * integrate with travis properly
 * pass in scope?
 * Rate limiting helper method
@@ -152,8 +152,10 @@ etsyUser.find(callback); //json
 ```js
 $ grunt test
 ```
+# Contributions & Bugs
+Please submit and bugs to this project and I will fix them. Pull requests also welcome.
 
-# Contributions
+# Acknowledgements
 
 Thanks to the ruby etsy api wrapper as I used their fixture tests data for the etsy-js tests and README outline.
 Thanks to octonode for the inspiration to make this API in coffeescript.
