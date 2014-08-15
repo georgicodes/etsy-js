@@ -138,14 +138,6 @@ More examples to come...
 etsyUser.find(callback); //json
 ```
 
-# Next Steps
-* integrate with travis properly
-* pass in scope?
-* Rate limiting helper method
-* More helper methods!!
-* Flesh out me.coffee (should just call user with __SELF__) with tests
-* use logging not console
-
 # Development
 
 ## Running the tests
@@ -159,3 +151,11 @@ Please submit and bugs to this project and I will fix them. Pull requests also w
 
 Thanks to the ruby etsy api wrapper as I used their fixture tests data for the etsy-js tests and README outline.
 Thanks to octonode for the inspiration to make this API in coffeescript.
+
+# Next Steps
+* integrate with travis properly
+* pass in scope?
+* Rate limiting helper method
+* More helper methods!!
+* Flesh out me.coffee (should just call user with __SELF__) with tests
+* use logging not console
