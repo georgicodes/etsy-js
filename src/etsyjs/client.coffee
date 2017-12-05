@@ -159,5 +159,13 @@ class Client
 
       callback null, accessToken
 
+  ###
+  Allows for adding scope to the requests.
+  (ex: transactions_r, listings_r, etc..)
+  @author : httpNick
+  ###
+  addScope: (newScope) ->
+    this.etsyOAuth._requestUrl += "%20#{newScope}"
+
 module.exports = (apiKey, options) ->
   new Client(apiKey, options)
