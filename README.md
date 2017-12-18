@@ -23,7 +23,9 @@ The Etsy API has two modes: public, and authenticated. Public mode only requires
 
 ```js
 var etsyjs = require('etsy-js');
-var client = etsyjs.client('your_api_key');
+var client = etsyjs.client({
+  key: 'your_api_key'
+});
 
 // direct API calls (GET / PUT / POST / DELETE)
 client.get('/users/sparkleprincess', {}, function (err, status, body, headers) {
