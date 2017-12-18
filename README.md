@@ -142,6 +142,15 @@ etsyUser.find(callback); //json
 
 # Development
 
+When making changes to etsy-js, edit the .coffee files in `src/`&mdash;*not* the .js files in `lib/`! The latter are what become available to users who install the npm package, and if you edit them, your changes may be overwritten by other contributors.
+
+## Compiling CoffeeScript to JavaScript
+```shell
+$ coffee --no-header -c -o lib/ src/
+```
+
+Make sure to run the above command in the cloned directory before committing your changes. Otherwise, those changes might not be exposed within the npm package.
+
 ## Running the tests
 ```js
 $ grunt test
