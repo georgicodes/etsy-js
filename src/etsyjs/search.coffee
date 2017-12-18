@@ -22,10 +22,21 @@ class Search
       else
         cb null, body, headers
 
-  # Finds all listings whose id match the params
+  # Finds all listings
   # '/listings' GET
   findAllListings: (params, cb) ->
     @client.get "/listings", params, (err, status, body, headers) ->
+      return cb(err) if err
+      if status isnt 200
+        cb(new Error('Search listings error'))
+      else
+        cb null, body, headers
+
+  # Finds listings with specified ids
+  # '/listings/:listing_id' GET
+  findListingByIds: (ids, params, cb) ->
+    uriParam = if Array.isArray(ids) then ids.join(',') else ids
+    @client.get "/listings/" + uriParam, params, (err, status, body, headers) ->
       return cb(err) if err
       if status isnt 200
         cb(new Error('Search listings error'))
